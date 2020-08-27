@@ -1,0 +1,101 @@
+<div class="row no-gutters" *ngIf="!loading">
+  <div class="col-12">
+
+    <div class="row">
+      <div class="col-12">
+        <button class="btn btn-block btn-dark mb-4 mt-4"
+                (click)="hideShowFilter()">{{showFilter ? 'Hide Filer' : 'Show Filter'}}</button>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="showFilter">
+      <div class="col-12">
+        <form #formFilter (ngSubmit)="filterData(formFilter)">
+
+          <div class="row form-group">
+            <div class="col-4">
+              <label for="search">Search by:</label>
+              <select name="search"
+                      id="search"
+                      class="custom-select"
+                      [(ngModel)]="filter.searchBy"
+              >
+                <option value="name">Name</option>
+                <option value="glass">Glass</option>
+                <option value="ingredient">Ingredient</option>
+                <option value="category">Category</option>
+              </select>
+            </div>
+
+            <div class="col-4" [ngSwitch]="filter.searchBy">
+              <label *ngSwitchCase="'name'" for="value">Name</label>
+              <label *ngSwitchCase="'glass'" for="value">Glass</label>
+              <label *ngSwitchCase="'ingredient'" for="value">Ingredient</label>
+              <label *ngSwitchCase="'category'" for="value">Category</label>
+
+              <input type="text"
+                     name="value"
+                     id="value"
+                     class="form-control"
+                     [(ngModel)]="filter.value">
+            </div>
+
+            <div class="col-4 align-self-end">
+              <button class="btn btn-block btn-outline-dark" type="submit">Filter</button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="listCocktails.length > 0">
+      <div class="col-lg-3 col-md-4 col-sm-6 col-12 mt-4 mb-4"
+           *ngFor="let cocktail of listCocktails  | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }">
+
+        <div class="card">
+          <img [src]="cocktail.img"
+               [alt]="cocktail.name"
+               class="card-img-top img-fluid w-100">
+          <div class="card-body">
+            <h5 class="card-title">{{cocktail.name}}</h5>
+            <!--<h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>-->
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-block btn-dark text-light"
+                    role="button"
+                    [routerLink]="['/detail-cocktail/', cocktail.id]" routerLinkActive="$router_link-active$"
+            >Ver detalle</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="listCocktails.length > itemsPerPage">
+      <div class="col-12 text-center">
+
+        <!--Genera la paginacion automaticamente, y recibe la pagina actual que ira incrementando, en cuanto se active el evento-->
+        <pagination-controls
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          (pageChange)="currentPage = $event"></pagination-controls>
+      </div>
+    </div>
+
+
+
+    <div class="row" *ngIf="listCocktails.length === 0">
+      <div class="col-12">
+        <p>No se encontraron cocktails</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<div class="h-100" *ngIf="loading">
+  <div class="spinner">
+    <img src="/assets/img/spinner.gif" alt="">
+  </div>
+</div>
